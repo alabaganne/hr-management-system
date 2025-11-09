@@ -1,45 +1,55 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-require("bootstrap");
-
-// store
-import store from "./store/index";
-require("@/store/subscriber");
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import { createPinia } from 'pinia'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap'
 
 // axios
-import axios from "axios";
-axios.defaults.baseURL = process.env.VUE_APP_API_URL || "http://127.0.0.1:8000/api";
-window.axios = axios;
+import axios from 'axios'
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+window.axios = axios
 
 // Make base URL globally available
-window.BASE_URL = process.env.VUE_APP_BASE_URL || "http://localhost:8000";
-// charts
-import Chart from 'chart.js'
-Chart.defaults.global.defaultFontFamily = "Comfortaa";
-Chart.defaults.global.maintainAspectRatio = false;
+window.BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8000'
 
-// re-authenticate the user if a valid token is present on the local storage
-const token = localStorage.getItem('token');
-Vue.config.productionTip = false;
+// Create Pinia store
+const pinia = createPinia()
 
-Vue.filter('clean', (value) => {
-  if(!value) return '';
-  value = value.toString() && value.replace('_', ' ');
+// Create Vue app
+const app = createApp(App)
 
-  return value.charAt(0).toUpperCase() + value.slice(1);
-})
+// Global filter replacement (Vue 3 removed filters, use global properties instead)
+app.config.globalProperties.$filters = {
+  clean(value) {
+    if (!value) return ''
+    value = value.toString() && value.replace('_', ' ')
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  }
+}
 
-store.dispatch('auth/attempt', token).then().catch(error => {
-  console.log(error.response);
-}).finally(() => {
-  new Vue({
-    router,
-    store,
-    render: function(h) {
-      return h(App);
-    },
-  }).$mount('#app');
-});
+// Use plugins
+app.use(pinia)
+app.use(router)
+
+// Re-authenticate the user if a valid token is present in localStorage
+const token = localStorage.getItem('token')
+
+// Import auth store
+import { useAuthStore } from './store/auth'
+
+// Attempt to authenticate, then mount the app
+if (token) {
+  const authStore = useAuthStore(pinia)
+  authStore.attempt(token)
+    .catch(error => {
+      console.log(error.response)
+    })
+    .finally(() => {
+      app.mount('#app')
+    })
+} else {
+  app.mount('#app')
+}
 
 // TODO: Refresh the token when it's expired

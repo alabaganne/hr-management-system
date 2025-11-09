@@ -1,29 +1,17 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import auth from "./auth";
+import { defineStore } from 'pinia'
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
-  state: {
+export const useMainStore = defineStore('main', {
+  state: () => ({
     pageLoading: true,
-  },
+  }),
+
   getters: {
-    isLoading({ state }) {
-      return state.pageLoading
-    }
+    isLoading: (state) => state.pageLoading,
   },
-  mutations: {
-    TOGGLE_LOADING({ state }) {
-      state.pageLoading = !state.pageLoading;
-    }
-  },
+
   actions: {
-    toggleLoader({ commit }) {
-      commit('TOGGLE_LOADING');
+    toggleLoader() {
+      this.pageLoading = !this.pageLoading
     },
   },
-  modules: {
-    auth,
-  },
-});
+})
