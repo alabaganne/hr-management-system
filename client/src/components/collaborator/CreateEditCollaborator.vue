@@ -154,11 +154,9 @@
                                             <label for="grade">Grade</label>
                                             <select class="custom-select" name="grade" id="grade" v-model="mainForm.grade" :class="{ 'is-invalid': mainForm.errors.has('grade') }">
                                                 <option selected value="">Select</option>
-                                                <option>option 1</option>
-                                                <option>option 2</option>
-                                                <option>option 3</option>
+                                                <option v-for="grade in grades" :key="grade" :value="grade">{{ grade }}</option>
                                             </select>
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('grade')" v-text="mainForm.errors.has('grade')"></p>
+                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('grade')" v-text="mainForm.errors.get('grade')"></p>
                                         </div>
                                         <div class="grid">
                                             <label for="hiring_date">Hiring date <span>(yyyy-mm-dd)</span></label>
@@ -174,9 +172,7 @@
                                             <label for="type">Type of contract</label>
                                             <select class="custom-select" name="type_of_contract" id="type_of_contract" v-model="mainForm.type_of_contract" :class="{ 'is-invalid': mainForm.errors.has('type_of_contract') }">
                                                 <option selected value="">Select</option>
-                                                <option>option 1</option>
-                                                <option>option 2</option>
-                                                <option>option 3</option>
+                                                <option v-for="type in contractTypes" :key="type" :value="type">{{ type }}</option>
                                             </select>
                                             <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('type_of_contract')" v-text="mainForm.errors.get('type_of_contract')"></p>
                                         </div>
@@ -188,11 +184,9 @@
                                         <template slot="modal-body">
                                             <div class="form-group">
                                                 <label for="#">Type</label>
-                                                <select class="custom-select" :class="{ 'is-invalid': newLeaveForm.errors.has('type') }" name="type" @change="newLeaveForm.errors.clear('type')" v-model="newLeaveForm.type"> <!-- select -->
-                                                    <option selected>Select</option>
-                                                    <option value="option 1">option 1</option>
-                                                    <option value="option 2">option 2</option>
-                                                    <option value="option 3">option 3</option>
+                                                <select class="custom-select" :class="{ 'is-invalid': newLeaveForm.errors.has('type') }" name="type" @change="newLeaveForm.errors.clear('type')" v-model="newLeaveForm.type">
+                                                    <option selected value="">Select</option>
+                                                    <option v-for="type in leaveTypes" :key="type" :value="type">{{ type }}</option>
                                                 </select>
                                                 <p class="text-danger mt-1 mb-0 small" v-if="newLeaveForm.errors.has('type')">{{ newLeaveForm.errors.get('type') }}</p>
                                             </div>
@@ -253,9 +247,7 @@
                                                 <label for="#">Type</label>
                                                 <select name="type" @change="newEvaluationForm.errors.clear('type')" class="custom-select" :class="{ 'is-invalid': newEvaluationForm.errors.has('type') }" v-model="newEvaluationForm.type">
                                                     <option selected value="">Select</option>
-                                                    <option value="option 1">option 1</option>
-                                                    <option value="option 2">option 2</option>
-                                                    <option value="option 3">option 3</option>
+                                                    <option v-for="type in evaluationTypes" :key="type" :value="type">{{ type }}</option>
                                                 </select>
                                                 <p class="text-danger mt-1 mb-0 small" v-if="newEvaluationForm.errors.has('type')">{{ newEvaluationForm.errors.get('type') }}</p>
                                             </div>
@@ -273,8 +265,7 @@
                                                 <label for="#">Status</label>
                                                 <select name="status" @change="newEvaluationForm.errors.clear('status')" class="custom-select" :class="{ 'is-invalid': newEvaluationForm.errors.has('status') }" v-model="newEvaluationForm.status">
                                                     <option selected value="">Select</option>
-                                                    <option value="option 1">option 1</option>
-                                                    <option value="option 2">option 2</option>
+                                                    <option v-for="status in evaluationStatuses" :key="status" :value="status">{{ status }}</option>
                                                 </select>
                                                 <p class="text-danger mt-1 mb-0 small" v-if="newEvaluationForm.errors.has('status')">{{ newEvaluationForm.errors.get('status') }}</p>
                                             </div>
@@ -297,6 +288,8 @@
 <script>
 import axios from 'axios';
 import Form from '@/core/Form';
+import { GRADES, CONTRACT_TYPES, LEAVE_TYPES, EVALUATION_TYPES, EVALUATION_STATUSES } from '@/constants/dropdowns';
+
 export default {
     props: {
         role: null
@@ -310,6 +303,13 @@ export default {
         return {
             // collaborator: Object,
             departments: [],
+
+            // Dropdown options
+            grades: GRADES,
+            contractTypes: CONTRACT_TYPES,
+            leaveTypes: LEAVE_TYPES,
+            evaluationTypes: EVALUATION_TYPES,
+            evaluationStatuses: EVALUATION_STATUSES,
 
             newLeaveForm: new Form({
                 type: null,

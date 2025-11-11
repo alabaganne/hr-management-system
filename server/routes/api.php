@@ -20,14 +20,14 @@ Route::group([ 'middleware' => 'api', 'prefix' => 'auth' ], function () {
     Route::get('me', 'AuthController@me');
 });
 Route::group([ 'middleware' => 'auth:api', 'prefix' => 'collaborators', 'namespace' => 'Collaborators' ], function() {
-    Route::group(['middleware' => 'can:view-collaborator'], function() {
+    Route::group(['middleware' => 'can:view collaborators'], function() {
         Route::post('/', 'CollaboratorController@index');
         Route::post('/archive', 'CollaboratorController@archive');
         Route::get('/gender', 'CollaboratorController@collaboratorsNumberByGender');
         Route::get('/department', 'CollaboratorController@collaboratorsNumberByDepartment');
         Route::get('/{user}', 'CollaboratorController@show');
     });
-    Route::post('/create', 'CollaboratorController@store')->middleware('can:add-collaborator');
+    Route::post('/create', 'CollaboratorController@store')->middleware('can:add collaborators');
     Route::prefix('/{user}')->group(function() {
         Route::resource('leaves', 'LeaveController')->parameters(['leaves' => 'leave']);
         Route::resources([
@@ -35,17 +35,17 @@ Route::group([ 'middleware' => 'auth:api', 'prefix' => 'collaborators', 'namespa
             'trainings' => 'TrainingController',
             'evaluations' => 'EvaluationController'
         ]);
-        Route::group(['middleware' => 'can:edit-collaborator'], function() {
+        Route::group(['middleware' => 'can:edit collaborators'], function() {
             Route::put('/', 'CollaboratorController@update'); // /api/collaborators/{user_id}
             Route::get('/restore', 'CollaboratorController@restore');
         });
-        Route::group(['middleware' => 'can:delete-collaborator'], function() { // /api/collaborators/{user_id}/
+        Route::group(['middleware' => 'can:delete collaborators'], function() { // /api/collaborators/{user_id}/
             Route::delete('/', 'CollaboratorController@destroy');
             Route::delete('/delete-permantly', 'CollaboratorController@deletePermantly');
         });
     });
 });
-Route::middleware('auth:api, can:edit-collaborator')->group(function() {
+Route::middleware('auth:api, can:edit collaborators')->group(function() {
     // validation only
     Route::post('/validate/leave', 'ValidationController@leave');
     Route::post('/validate/skill', 'ValidationController@skill');
@@ -60,5 +60,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/departments', 'DepartmentController@index');
     // update account
     Route::post('/account/update', 'UserController@update');
-    Route::post('/users/{user}/profile-image', 'UserController@setProfileImage')->middleware('can:edit-collaborator');
+    Route::post('/users/{user}/profile-image', 'UserController@setProfileImage')->middleware('can:edit collaborators');
 });

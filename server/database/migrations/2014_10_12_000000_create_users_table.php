@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('username')->unique()->nullable();
             $table->string('email')->unique();
-            $table->string('password')->default('12345678');
+            $table->string('password'); // No default password for security
             $table->string('phone_number')->unique()->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('address')->nullable();
@@ -31,10 +31,10 @@ class CreateUsersTable extends Migration
             $table->integer('experience_level')->nullable();
             $table->string('source')->nullable();
             $table->string('position')->nullable();
-            $table->string('grade')->nullable(); // ?may be "enum" too
+            $table->enum('grade', ['Junior', 'Mid-level', 'Senior', 'Lead', 'Principal', 'Manager'])->nullable();
             $table->date('hiring_date')->nullable(); // contract_start_date
             $table->date('contract_end_date')->nullable();
-            $table->enum('type_of_contract', ['option 1', 'option 2', 'option 3'])->nullable();
+            $table->enum('type_of_contract', ['Permanent', 'Fixed-term', 'Contractor', 'Intern', 'Part-time'])->nullable();
             $table->integer('allowed_leave_days')->nullable();
             // !department_id FOREIGN KEY is added on a seperate migration file
             $table->string('image_path')->default('storage/images/default-avatar.svg');
