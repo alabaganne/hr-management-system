@@ -2,7 +2,7 @@
   <div class="grid">
     <label :class="{ required }" :for="name">{{ label }}</label>
     <input
-      v-if="type !== 'select'"
+      v-if="type !== 'select' && type !== 'textarea'"
       :id="name"
       :type="type"
       :name="name"
@@ -13,6 +13,18 @@
       class="form-control"
       :class="{ 'is-invalid': error }"
     />
+    <textarea
+      v-else-if="type === 'textarea'"
+      :id="name"
+      :name="name"
+      :placeholder="placeholder"
+      :value="modelValue"
+      :disabled="disabled"
+      :rows="rows"
+      @input="$emit('update:modelValue', $event.target.value)"
+      class="form-control"
+      :class="{ 'is-invalid': error }"
+    ></textarea>
     <select
       v-else
       :id="name"
@@ -20,7 +32,7 @@
       :value="modelValue"
       :disabled="disabled"
       @change="$emit('update:modelValue', $event.target.value)"
-      class="form-control"
+      class="form-control custom-select"
       :class="{ 'is-invalid': error }"
     >
       <option value="">{{ placeholder || 'Select an option' }}</option>
@@ -75,8 +87,19 @@ export default {
     options: {
       type: Array,
       default: () => []
+    },
+    rows: {
+      type: Number,
+      default: 3
     }
   },
   emits: ['update:modelValue']
 }
 </script>
+
+<style scoped>
+.required::after {
+  content: ' *';
+  color: #dc3545;
+}
+</style>

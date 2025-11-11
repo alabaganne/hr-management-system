@@ -10,38 +10,11 @@
             </div>
             <form autocomplete="off" class="p-4" @submit.prevent="onSubmit()" @keydown="mainForm.errors.clear($event.target.name)">
                 <h3 class="p-2 mb-0">Contact</h3>
-                <div class="grid-container mb-4">
-                    <div class="grid">
-                        <label class="required" for="#">Full name</label>
-                        <input class="form-control" name="name" type="text" placeholder="John Doe" v-model="mainForm.name" :class="{ 'is-invalid': mainForm.errors.has('name') }">
-                        <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('name')" v-text="mainForm.errors.get('name')"></p>
-                    </div>
-                    <!-- everyone of those may be a component instead -->
-                    <div class="grid">
-                        <label class="required" for="#">Email address</label>
-                        <input class="form-control" type="email" placeholder="johndoe@example.com" name="email" v-model="mainForm.email" :class="{ 'is-invalid': mainForm.errors.has('email') }">
-                        <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('email')" v-text="mainForm.errors.get('email')"></p>
-                    </div>
-                    <div class="grid">
-                        <label class="required" for="#">Phone number</label>
-                        <input class="form-control" type="text" placeholder="(+216) 50 123 123" name="phone_number" v-model="mainForm.phone_number" :class="{ 'is-invalid': mainForm.errors.has('phone_number') }">
-                        <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('phone_number')" v-text="mainForm.errors.get('phone_number')"></p>
-                    </div>
-                    <div class="grid">
-                        <label for="username">Username</label>
-                        <input class="form-control" type="text" name="username" id="username" v-model="mainForm.username" placeholder="johndoe" :class="{ 'is-invalid': mainForm.errors.has('username') }">
-                        <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('username')" v-text="mainForm.errors.get('username')"></p>
-                    </div>
-                    <div class="grid">
-                        <label for="password">Password</label>
-                        <input class="form-control" type="password" name="password" id="password" v-model="mainForm.password" :class="{ 'is-invalid': mainForm.errors.has('password') }">
-                        <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('password')" v-text="mainForm.errors.get('password')"></p>
-                    </div>
-                    <div class="grid">
-                        <label for="image">{{ role === 'create' ? 'Set' : 'Change'}} profile image</label>
-                        <input type="file" name="profileImage" class="form-control-file mt-1" id="image" @change="onImageChange">
-                    </div>
-                </div>
+                <ContactForm
+                    :form="mainForm"
+                    :is-editing="role === 'edit'"
+                    @image-change="onImageChange"
+                />
                 <div class="custom-grid-container">
                     <div class="grid p-2">
                         <div class="list-group rounded small shadow" id="list-tab" role="tablist">
@@ -57,126 +30,12 @@
                         <div class="p-4 shadow-sm border border-light rounded-lg">
                             <div class="tab-content" id="nav-tabContent">
                                 <div class="tab-pane fade show active" id="list-informations" role="tabpanel" aria-labelledby="list-informations-list">
-                                    <div class="mb-5">
-                                        <h4>Personal Informations</h4>
-                                        <div class="grid-container-sm">
-                                            <div class="grid">
-                                                <label for="#">Date of birth <span>(yyyy-mm-dd)</span></label>
-                                                <input type="text" placeholder="yyyy-mm-dd" class="form-control" name="date_of_birth" v-model="mainForm.date_of_birth" :class="{ 'is-invalid': mainForm.errors.has('date_of_birth') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('date_of_birth')" v-text="mainForm.errors.get('date_of_birth')"></p>
-                                            </div>
-                                            <!-- may be a component -->
-                                             <div class="grid">
-                                                <label for="#">Address</label>
-                                                <input type="text" class="form-control" name="address" v-model="mainForm.address" :class="{ 'is-invalid': mainForm.errors.has('address') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('address')" v-text="mainForm.errors.get('address')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label class="required" for="civil_status">Civil status</label>
-                                                <select class="custom-select" name="civil_status" id="civil_status" v-model="mainForm.civil_status" :class="{ 'is-invalid': mainForm.errors.has('civil_status') }" @change="mainForm.errors.clear('civil_status')">
-                                                    <option selected value="">Select</option>
-                                                    <option value="single">Single</option>
-                                                    <option value="married">Married</option>
-                                                </select>
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('civil_status')" v-text="mainForm.errors.get('civil_status')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label class="required" for="#">Gender</label>
-                                                <select class="custom-select" name="gender" v-model="mainForm.gender" :class="{ 'is-invalid': mainForm.errors.has('gender') }" @change="mainForm.errors.clear('gender')">
-                                                    <option selected value="">Select</option>
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
-                                                </select>
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('gender')" v-text="mainForm.errors.get('gender')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label class="required" for="#">ID card number</label>
-                                                <input type="text" class="form-control" placeholder="12345678" name="id_card_number" v-model="mainForm.id_card_number" :class="{ 'is-invalid': mainForm.errors.has('id_card_number') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('id_card_number')" v-text="mainForm.errors.get('id_card_number')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label for="#">Nationality</label>
-                                                <input type="text" class="form-control" name="nationality" v-model="mainForm.nationality" :class="{ 'is-invalid': mainForm.errors.has('nationality') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('nationality')" v-text="mainForm.errors.get('nationality')"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4>HR Informations</h4>
-                                        <div class="grid-container-sm">
-                                            <div class="grid">
-                                                <label for="#">University</label>
-                                                <input type="text" class="form-control" name="university" v-model="mainForm.university" :class="{ 'is-invalid': mainForm.errors.has('university') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('university')" v-text="mainForm.errors.get('nationality')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label for="history">History</label>
-                                                <input type="text" class="form-control" name="history" id="history" v-model="mainForm.history" :class="{ 'is-invalid': mainForm.errors.has('history') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('history')" v-text="mainForm.errors.get('history')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label for="experience_level">Experience level</label>
-                                                <select class="custom-select" name="experience_level" id="experience_level" v-model="mainForm.experience_level" :class="{ 'is-invalid': mainForm.errors.has('experience_level') }">
-                                                    <option selected value="">Select</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('experience_level')" v-text="mainForm.errors.get('experience_level')"></p>
-                                            </div>
-                                            <div class="grid">
-                                                <label for="source">Source</label>
-                                                <input type="text" class="form-control" name="source" id="source" v-model="mainForm.source" :class="{ 'is-invalid': mainForm.errors.has('source') }">
-                                                <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('source')" v-text="mainForm.errors.get('source')"></p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h4 class="mb-3">Personal Informations</h4>
+                                    <PersonalInfoForm :form="mainForm" />
                                 </div>
                                 <div class="tab-pane fade" id="list-contract" role="tabpanel" aria-labelledby="list-contract-list">
-                                    <h4>Contractual information</h4>
-                                    <div class="grid-container-sm">
-                                        <div class="grid">
-                                            <label class="required" for="department">Department</label>
-                                            <select class="custom-select" name="department_id" id="department" v-model="mainForm.department_id" :class="{ 'is-invalid': mainForm.errors.has('department_id') }">
-                                                <option selected value="">Select</option>
-                                                <option v-for="department in departments" :key="department.id" :value="department.id">{{ department.name }}</option>
-                                            </select>
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('department_id')" v-text="mainForm.errors.get('department_id')"></p>
-                                        </div>
-                                        <div class="grid">
-                                            <label class="required" for="position">Position</label>
-                                            <input type="text" class="form-control" name="position" id="position" v-model="mainForm.position" :class="{ 'is-invalid': mainForm.errors.has('position') }">
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('position')" v-text="mainForm.errors.get('position')"></p>
-                                        </div>
-                                        <div class="grid">
-                                            <label for="grade">Grade</label>
-                                            <select class="custom-select" name="grade" id="grade" v-model="mainForm.grade" :class="{ 'is-invalid': mainForm.errors.has('grade') }">
-                                                <option selected value="">Select</option>
-                                                <option v-for="grade in grades" :key="grade" :value="grade">{{ grade }}</option>
-                                            </select>
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('grade')" v-text="mainForm.errors.get('grade')"></p>
-                                        </div>
-                                        <div class="grid">
-                                            <label for="hiring_date">Hiring date <span>(yyyy-mm-dd)</span></label>
-                                            <input type="text" placeholder="yyyy-mm-dd" class="form-control" name="hiring_date" id="hiring_date" v-model="mainForm.hiring_date" :class="{ 'is-invalid': mainForm.errors.has('hiring_date') }">
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('hiring_date')" v-text="mainForm.errors.get('hiring_date')"></p>
-                                        </div>
-                                        <div class="grid">
-                                            <label for="contract_end_date">Contract end date <span>(yyyy-mm-dd)</span></label>
-                                            <input type="text" placeholder="yyyy-mm-dd" class="form-control" name="contract_end_date" id="contract_end_date" v-model="mainForm.contract_end_date" :class="{ 'is-invalid': mainForm.errors.has('contract_start_date') }">
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('contract_start_date')" v-text="mainForm.errors.get('contract_start_date')"></p>
-                                        </div>
-                                        <div class="grid">
-                                            <label for="type">Type of contract</label>
-                                            <select class="custom-select" name="type_of_contract" id="type_of_contract" v-model="mainForm.type_of_contract" :class="{ 'is-invalid': mainForm.errors.has('type_of_contract') }">
-                                                <option selected value="">Select</option>
-                                                <option v-for="type in contractTypes" :key="type" :value="type">{{ type }}</option>
-                                            </select>
-                                            <p class="text-danger mt-1 mb-0 small" v-if="mainForm.errors.has('type_of_contract')" v-text="mainForm.errors.get('type_of_contract')"></p>
-                                        </div>
-                                    </div>
+                                    <h4 class="mb-3">Contractual information</h4>
+                                    <EmploymentContractForm :form="mainForm" :departments="departments" />
                                 </div>
                                 <!-- end 1st Form -->
                                 <div class="tab-pane fade" id="list-leave" role="tabpanel" aria-labelledby="list-leave-list">
@@ -288,25 +147,28 @@
 <script>
 import axios from 'axios';
 import Form from '@/core/Form';
-import { GRADES, CONTRACT_TYPES, LEAVE_TYPES, EVALUATION_TYPES, EVALUATION_STATUSES } from '@/constants/dropdowns';
+import { LEAVE_TYPES, EVALUATION_TYPES, EVALUATION_STATUSES } from '@/constants/dropdowns';
+import ContactForm from './ContactForm.vue';
+import PersonalInfoForm from './PersonalInfoForm.vue';
+import EmploymentContractForm from './EmploymentContractForm.vue';
 
 export default {
     props: {
         role: null
     },
     components: {
+        ContactForm,
+        PersonalInfoForm,
+        EmploymentContractForm,
         Table: () => {
             return import('@/components/collaborator/CreateEditViewTable');
         },
     },
     data() {
         return {
-            // collaborator: Object,
             departments: [],
 
-            // Dropdown options
-            grades: GRADES,
-            contractTypes: CONTRACT_TYPES,
+            // Dropdown options for nested forms
             leaveTypes: LEAVE_TYPES,
             evaluationTypes: EVALUATION_TYPES,
             evaluationStatuses: EVALUATION_STATUSES,
