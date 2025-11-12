@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Collaborators;
 
 use App\Http\Controllers\Controller;
 use App\Models\User; // collaborator
+use App\Services\CollaboratorService;
 
 // requests validations
 use App\Http\Requests\Collaborator as CollaboratorRequest;
@@ -11,7 +12,6 @@ use App\Http\Requests\Search as SearchRequest;
 use App\Http\Resources\CollaboratorResource;
 use App\Models\Department;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * @OA\PathItem(
@@ -82,6 +82,13 @@ use Illuminate\Support\Facades\Hash;
 
 class CollaboratorController extends Controller
 {
+    protected CollaboratorService $collaboratorService;
+
+    public function __construct(CollaboratorService $collaboratorService)
+    {
+        $this->collaboratorService = $collaboratorService;
+    }
+
     /**
      * @OA\Post(
      *      path="/api/collaborators",
@@ -150,7 +157,7 @@ class CollaboratorController extends Controller
      * )
      */
     public function store(CollaboratorRequest $request) {
-        $collaborator = User::create($request->validated());
+        $collaborator = $this->collaboratorService->createCollaborator($request->validated());
 
         return response()->json(['collaborator_id' => $collaborator->id], 201);
     }
@@ -170,15 +177,7 @@ class CollaboratorController extends Controller
      * )
      */
     public function update(CollaboratorRequest $request, User $user) {
-        $validated = $request->validated();
-
-        if($validated['password'] === null) {
-            $validated['password'] = $user->password;
-        } else {
-            $validated['password'] = Hash::make($validated['password']);
-        }
-
-        $user->update($validated);
+        $this->collaboratorService->updateCollaborator($user, $request->validated());
 
         return response()->json([], 200);
     }
@@ -196,7 +195,7 @@ class CollaboratorController extends Controller
      * )
     */
     public function destroy(User $user) {
-        $user->delete();
+        $this->collaboratorService->deleteCollaborator($user);
 
         return response()->json([], 200);
     }
@@ -220,19 +219,7 @@ class CollaboratorController extends Controller
      * )
     */
     public function collaboratorsNumberByGender() {
-        $allCollaborators = User::doesntHave('roles')->get();
-
-        $numberOfMales = 0;
-        foreach($allCollaborators as $collaborator) {
-            if($collaborator->gender === 'male')
-                $numberOfMales++;
-        }
-        $numberOfFemales = count($allCollaborators) - $numberOfMales;
-
-        return response()->json([
-            'male' => $numberOfMales,
-            'female' => $numberOfFemales
-        ]);
+        return response()->json($this->collaboratorService->getCollaboratorsByGender());
     }
 
     /**
@@ -257,14 +244,7 @@ class CollaboratorController extends Controller
      * )
     */
     public function collaboratorsNumberByDepartment() {
-        $departments = Department::all();
-
-        $response = [];
-        foreach($departments as $department) {
-            $response[$department->name] = count($department->users);
-        }
-
-        return response()->json($response, 200);
+        return response()->json($this->collaboratorService->getCollaboratorsByDepartment(), 200);
     }
 
     /**
@@ -281,10 +261,10 @@ class CollaboratorController extends Controller
     public function archive(SearchRequest $request) { // req body must include: items_per_page
         $validated = $request->validated();
 
-        $archive = User::onlyTrashed()
-            ->doesntHave('roles')
-            ->where('name', 'LIKE', '%' . $validated['search_text'] . '%')
-            ->paginate($validated['items_per_page']);
+        $archive = $this->collaboratorService->getArchivedCollaborators(
+            $validated['search_text'],
+            $validated['items_per_page']
+        );
 
         return CollaboratorResource::collection($archive);
     }
@@ -308,7 +288,7 @@ class CollaboratorController extends Controller
      * )
     */
     public function restore($user_id) {
-        User::onlyTrashed()->where('id', $user_id)->restore();
+        $this->collaboratorService->restoreCollaborator($user_id);
 
         return response()->json(['message' => 'User restored.'], 200);
     }
@@ -332,7 +312,8 @@ class CollaboratorController extends Controller
      * )
     */
     public function deletePermantly($user_id) {
-        User::onlyTrashed()->where('id', $user_id)->forceDelete();
+        $user = User::onlyTrashed()->findOrFail($user_id);
+        $this->collaboratorService->permanentlyDeleteCollaborator($user);
 
         return response()->json(['message' => 'User permantly deleted.'], 200);
     }

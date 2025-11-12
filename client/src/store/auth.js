@@ -25,7 +25,6 @@ export const useAuthStore = defineStore('auth', {
         })
 
         this.setToken(token)
-        axios.defaults.headers['Authorization'] = `Bearer ${token}`
         this.setUser(response.data.data)
         return response
       } catch (error) {
@@ -53,10 +52,8 @@ export const useAuthStore = defineStore('auth', {
     setToken(token) {
       this.token = token
       if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         localStorage.setItem('token', token)
       } else {
-        axios.defaults.headers['Authorization'] = null
         localStorage.removeItem('token')
       }
     },
@@ -69,8 +66,20 @@ export const useAuthStore = defineStore('auth', {
       this.setUser(user)
     },
 
-    refreshToken() {
-      // TODO: Implement token refresh
+    async refreshToken() {
+      try {
+        const response = await axios.post('/auth/refresh')
+        const newToken = response.data.access_token
+
+        this.setToken(newToken)
+        return newToken
+      } catch (error) {
+        console.error('Token refresh failed:', error)
+        // If refresh fails, logout the user
+        this.setToken(null)
+        this.setUser(null)
+        throw error
+      }
     },
   },
 })

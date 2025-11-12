@@ -17,12 +17,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments_names = [];
-        foreach(Department::all() as $department) {
-            array_push($departments_names, $department);
-        }
-        
-        return response()->json($departments_names, 200);
+        return response()->json(Department::all(), 200);
     }
 
     /**
@@ -38,8 +33,37 @@ class DepartmentController extends Controller
                 'name' => 'required'
             ])
         );
-        
+
         return response()->json([], 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Department  $department
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Department $department)
+    {
+        return response()->json($department, 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Department  $department
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Department $department)
+    {
+        $department->update(
+            $request->validate([
+                'name' => 'required'
+            ])
+        );
+
+        return response()->json([], 200);
     }
 
     // * Get the collaborators that belongs to a specific department

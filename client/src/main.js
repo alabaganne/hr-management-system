@@ -5,9 +5,8 @@ import { createPinia } from 'pinia'
 import 'bootstrap/dist/css/bootstrap.min.css'
 // Bootstrap JS removed - using Vue components instead
 
-// axios
-import axios from 'axios'
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+// axios with configured interceptors
+import axios from './plugins/axios'
 window.axios = axios
 
 // Make base URL globally available
@@ -51,5 +50,3 @@ if (token) {
 } else {
   app.mount('#app')
 }
-
-// TODO: Refresh the token when it's expired

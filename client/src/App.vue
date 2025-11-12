@@ -5,6 +5,7 @@
       <router-link to="/about">About</router-link>
     </div>-->
     <router-view />
+    <Toast />
     <!-- <transition name="fade">
       <Loader v-if="isLoading" />
     </transition> -->
@@ -12,6 +13,13 @@
 </template>
 
 <script>
+import Toast from './components/Toast.vue'
+
+export default {
+  components: {
+    Toast
+  }
+}
 </script>
 
 <style lang="scss">

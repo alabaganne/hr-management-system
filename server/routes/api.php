@@ -53,11 +53,13 @@ Route::middleware('auth:api, can:edit collaborators')->group(function() {
     Route::post('/validate/evaluation', 'ValidationController@evaluation');
     // manage departments
     Route::post('/departments', 'DepartmentController@store');
+    Route::put('/departments/{department}', 'DepartmentController@update');
     Route::post('/departments/{department}', 'DepartmentController@getUsers');
     Route::delete('/departments/{department}', 'DepartmentController@destroy');
 });
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/departments', 'DepartmentController@index');
+    Route::get('/departments/{department}', 'DepartmentController@show');
     // update account
     Route::post('/account/update', 'UserController@update');
     Route::post('/users/{user}/profile-image', 'UserController@setProfileImage')->middleware('can:edit collaborators');
