@@ -15,10 +15,10 @@ class CreateEvaluationsTable extends Migration
     {
         Schema::create('evaluations', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); // ?may be "enum"
+            $table->enum('type', ['Annual Review', 'Mid-Year Review', 'Probation Review', 'Performance Review']);
             $table->string('manager');
             $table->date('date');
-            $table->string('status');
+            $table->enum('status', ['Scheduled', 'In Progress', 'Completed']);
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

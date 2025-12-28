@@ -1,11 +1,31 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use Faker\Generator as Faker;
+use App\Models\Department;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(App\Models\Department::class, function (Faker $faker) {
-    // return [
-    //     'name' => ucfirst($faker->word())
-    // ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Department>
+ */
+class DepartmentFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = Department::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => ucfirst(fake()->word())
+        ];
+    }
+}

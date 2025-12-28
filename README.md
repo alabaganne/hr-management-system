@@ -5,24 +5,26 @@ A full-stack HR management application built with Vue.js and Laravel. Developed 
 ## Tech Stack
 
 ### Frontend
-- **Vue.js 2.6** - Progressive JavaScript framework
-- **Vuex** - State management
-- **Vue Router** - SPA routing
+- **Vue.js 3.4** - Progressive JavaScript framework
+- **Pinia** - State management (Vue 3 recommended)
+- **Vue Router 4** - SPA routing
 - **Axios** - HTTP client
-- **Chart.js** - Data visualization
-- **Bootstrap 4** - UI framework
+- **Chart.js 4** - Data visualization
+- **Bootstrap 5** - UI framework
 - **SCSS** - CSS preprocessor
+- **Vite** - Build tool and dev server
 
-### Backend  
-- **Laravel 7** - PHP framework
+### Backend
+- **Laravel 11** - PHP framework (requires PHP 8.2+)
 - **JWT Auth** - Token authentication
 - **MySQL** - Database
 - **Spatie Permissions** - Role-based access control
 
 ### Development Tools
-- **Vue CLI** - Frontend tooling
-- **Composer** - PHP dependency management
+- **Vite** - Frontend build tool
+- **Composer 2.x** - PHP dependency management
 - **npm** - JavaScript package management
+- **Laravel Pint** - Code style fixer
 
 ## Overview
 
@@ -102,9 +104,9 @@ docker-compose exec db mysql -u hr_user -p hr_management
 ### Option 2: Manual Installation
 
 #### Prerequisites
-- PHP >= 7.2.5
-- Composer
-- Node.js & npm
+- PHP >= 8.2
+- Composer 2.x
+- Node.js >= 18 & npm
 - MySQL
 
 #### Installation
@@ -131,12 +133,22 @@ php artisan serve
 ```bash
 cd client
 npm install
-# Configure API URL in .env
-npm run serve
+# Configure API URL in .env (use VITE_ prefix for environment variables)
+npm run dev
 ```
 
 Backend runs on `http://localhost:8000`
 Frontend runs on `http://localhost:8080`
+
+## Migration Status
+
+This project has been migrated from Laravel 7 to Laravel 11 and Vue.js 2 to Vue.js 3. See [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) for:
+- Complete migration details
+- Breaking changes
+- Underdeveloped areas and missing features
+- Recommended next steps for development
+
+**Note:** Some features are incomplete or use placeholder values. Please refer to the migration guide for a comprehensive list of areas needing development.
 
 ## Default Users
 

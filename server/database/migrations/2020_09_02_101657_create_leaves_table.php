@@ -15,7 +15,7 @@ class CreateLeavesTable extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); // ?may be "enum"
+            $table->enum('type', ['Annual Leave', 'Sick Leave', 'Personal Leave']);
             $table->integer('days');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();

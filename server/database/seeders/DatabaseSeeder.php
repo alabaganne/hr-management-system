@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,14 +25,14 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesAndPermissionsSeeder::class);
         
         // Create 15 additional random users
-        factory(App\Models\User::class, 15)->create()->each(function ($user) use ($departmentIds) {
+        \App\Models\User::factory(15)->create()->each(function ($user) use ($departmentIds) {
             $user->department_id = $departmentIds[array_rand($departmentIds)];
             $user->save();
         });
-        
+
         // Add 2 specific employees to Mobile department
         $mobileDeptId = App\Models\Department::where('name', 'Mobile')->first()->id;
-        factory(App\Models\User::class, 2)->create()->each(function ($user) use ($mobileDeptId) {
+        \App\Models\User::factory(2)->create()->each(function ($user) use ($mobileDeptId) {
             $user->department_id = $mobileDeptId;
             $user->save();
         });
